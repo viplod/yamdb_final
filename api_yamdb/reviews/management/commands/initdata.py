@@ -117,10 +117,9 @@ def get_model(model_name):
 
     try:
         model = getattr(mod, model_name)
+        return model
     except AttributeError:
         return None
-
-    return model
 
 
 def get_model_csv_filename(name):

@@ -85,7 +85,7 @@ class TitleSerializer(serializers.ModelSerializer):
         init_genre = self.initial_data.getlist('genre')
         if init_genre:
 
-            if not(type(init_genre) == list):
+            if not (type(init_genre) == list):
                 raise ValidationError(
                     f'`genre`: Invalid data format `{init_genre}`.'
                     f'Expected a list, but got `{type(init_genre)}`.'
