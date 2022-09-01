@@ -116,8 +116,7 @@ def get_model(model_name):
         return None
 
     try:
-        model = getattr(mod, model_name)
-        return model
+        return getattr(mod, model_name)
     except AttributeError:
         return None
 
