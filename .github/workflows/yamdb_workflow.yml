@@ -60,7 +60,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          sudo docker pull viplod/api_yamdb
+          sudo docker pull viplod/api_yamdb:v1.0
           sudo docker stop $(sudo docker ps -a -q)
           sudo docker run --rm -d -p 5000:5000 viplod/api_yamdb
   send_message:
