@@ -1,4 +1,4 @@
-![github workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+![example event parameter](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?event=push)
 
 ![](./api_yamdb/static/header.png)
 #Документация к API проекта YAMDB (v1)
