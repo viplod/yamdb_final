@@ -112,8 +112,7 @@ docker-compose up -d --build
     ```bash
     docker-compose exec web python manage.py createsuperuser
     ```
-Ознакомиться с документацией по адресу.
-[http://127.0.0.1/redoc/](http://127.0.0.1/redoc/)
+Ознакомиться с документацией можно в формате ReDoc
 
 
 ## Документация по api
