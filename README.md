@@ -1,4 +1,4 @@
-![example event parameter](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?event=push)
+[![API for YaMDB](https://github.com/viplod/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg?branch=main)](https://github.com/viplod/yamdb_final/actions/workflows/yamdb_workflow.yml)
 
 ![](./api_yamdb/static/header.png)
 #Документация к API проекта YAMDB (v1)
@@ -37,85 +37,81 @@ ___
 
 ## Как запустить проект:
 
-Установка
+### Шаблон описания файла .env
+ - DB_ENGINE=django.db.backends.postgresql
+ - DB_NAME=postgres
+ - POSTGRES_USER=postgres
+ - POSTGRES_PASSWORD=postgres
+ - DB_HOST=db
+ - DB_PORT=5432
+ - SECRET_KEY=<секретный ключ проекта django>
+### Инструкции для развертывания и запуска приложения
+для Linux-систем все команды необходимо выполнять от имени администратора
+- Склонировать репозиторий
+```bash
+git clone https://github.com/viplod/yamdb_final.git
+```
+- Выполнить вход на удаленный сервер
+- Установить docker на сервер:
+```bash
+apt install docker.io 
+```
+- Установить docker-compose на сервер:
+```bash
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+```
+- Локально отредактировать файл infra/nginx.conf, обязательно в строке server_name вписать IP-адрес сервера
+- Скопировать файлы docker-compose.yml и nginx.conf из директории infra на сервер:
+```bash
+scp docker-compose.yml <username>@<host>:/home/<username>/docker-compose.yml
+scp nginx.conf <username>@<host>:/home/<username>/nginx.conf
+```
+- Создать .env файл по предлагаемому выше шаблону. Обязательно изменить значения POSTGRES_USER и POSTGRES_PASSWORD
+- Для работы с Workflow добавить в Secrets GitHub переменные окружения для работы:
+    ```
+    DB_ENGINE=<django.db.backends.postgresql>
+    DB_NAME=<имя базы данных postgres>
+    DB_USER=<пользователь бд>
+    DB_PASSWORD=<пароль>
+    DB_HOST=<db>
+    DB_PORT=<5432>
+    
+    DOCKER_PASSWORD=<пароль от DockerHub>
+    DOCKER_USERNAME=<имя пользователя>
+    
+    SECRET_KEY=<секретный ключ проекта django>
 
-- Шаг 1. Проверьте установлен ли у вас Docker
-Прежде, чем приступать к работе, необходимо знать, что Docker установлен. Для этого достаточно ввести:
+    USER=<username для подключения к серверу>
+    HOST=<IP сервера>
+    PASSPHRASE=<пароль для сервера, если он установлен>
+    SSH_KEY=<ваш SSH ключ (для получения команда: cat ~/.ssh/id_rsa)>
 
-```
-docker -v
-```
-Или скачайте Docker Desktop для Mac или Windows. Docker Compose будет установлен автоматически. В Linux убедитесь, что у вас установлена последняя версия Compose. Также вы можете воспользоваться официальной инструкцией.
-
-- Шаг 2. Клонируйте репозиторий себе на компьютер
-Введите команду:
-
-```
-git clone https://github.com/viplod/infra_sp2.git
-```
-
-- Шаг 3. Создайте в клонированной директории файл .env
-Пример:
-```
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-DB_HOST=db
-DB_PORT=5432
-```
-
-- Шаг 4. Запуск docker-compose
-Для запуска необходимо выполнить из директории с проектом команду:
-```
-docker-compose up -d
-```
-
-- Шаг 5. База данных
-Создаем и применяем миграции:
-```
-docker-compose exec web python manage.py makemigrations --noinput
-docker-compose exec web python manage.py migrate --noinput
-```
-
-- Шаг 6. Подгружаем статику
-Выполните команду:
-```
-docker-compose exec web python manage.py collectstatic --no-input 
-```
-
-- Шаг 7. Заполнение базы тестовыми данными
-Для заполнения базы тестовыми данными вы можете использовать файл fixtures.json, который находится в infra_sp2. Выполните команду:
-```
-docker-compose exec web python manage.py loaddata fixtures.json
-```
-
-Другие команды
-Создание суперпользователя:
-```
-docker-compose exec web python manage.py createsuperuser
-```
-
-Остановить работу всех контейнеров можно командой:
-```
-docker-compose down
-```
-
-Для пересборки и запуска контейнеров воспользуйтесь командой:
-```
+    TELEGRAM_TO=<ID чата, в который придет сообщение>
+    TELEGRAM_TOKEN=<токен вашего бота>
+    ```
+    Workflow состоит из четырёх шагов:
+     - Проверка кода на соответствие PEP8
+     - Сборка и публикация образа бекенда на DockerHub.
+     - Автоматический деплой на удаленный сервер.
+     - Отправка уведомления в телеграм-чат.
+- собрать и запустить контейнеры на сервере:
+```bash
 docker-compose up -d --build
 ```
-
-Мониторинг запущенных контейнеров:
-```
-docker stats
-```
-
-Останавливаем и удаляем контейнеры, сети, тома и образы:
-```
-docker-compose down -v
-```
-
+- После успешной сборки выполнить следующие действия (только при первом деплое):
+    * провести миграции внутри контейнеров:
+    ```bash
+    docker-compose exec web python manage.py migrate
+    ```
+    * собрать статику проекта:
+    ```bash
+    docker-compose exec web python manage.py collectstatic --no-input
+    ```  
+    * Создать суперпользователя Django, после запроса от терминала ввести логин и пароль для суперпользователя:
+    ```bash
+    docker-compose exec web python manage.py createsuperuser
+    ```
 Ознакомиться с документацией по адресу.
 [http://127.0.0.1/redoc/](http://127.0.0.1/redoc/)
 
