@@ -1,4 +1,6 @@
-[![API for YaMDB](https://github.com/viplod/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg?branch=main)](https://github.com/viplod/yamdb_final/actions/workflows/yamdb_workflow.yml)
+![API for YaMDB](https://github.com/viplod/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg?branch=master)
+
+Проект размещается по адресу http://viplod.sytes.net/
 
 ![](./api_yamdb/static/header.png)
 #Документация к API проекта YAMDB (v1)
